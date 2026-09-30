@@ -277,11 +277,17 @@ if(WIN32)
     set(deploy_tool_options "--force-openssl --force")
 endif()
 
+# DEPLOY_TOOL_OPTIONS is available since Qt 6.7 (Android 7 builds use Qt 6.6)
+set(deploy_script_extra_args "")
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.7)
+    list(APPEND deploy_script_extra_args DEPLOY_TOOL_OPTIONS ${deploy_tool_options})
+endif()
+
 qt_generate_deploy_qml_app_script(
     TARGET ${PROJECT}
     OUTPUT_SCRIPT QT_DEPLOY_SCRIPT
     NO_UNSUPPORTED_PLATFORM_ERROR
-    DEPLOY_TOOL_OPTIONS ${deploy_tool_options}
+    ${deploy_script_extra_args}
 )
 install(SCRIPT ${QT_DEPLOY_SCRIPT}
     COMPONENT AmneziaVPN

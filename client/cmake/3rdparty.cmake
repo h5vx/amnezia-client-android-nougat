@@ -16,8 +16,12 @@ add_subdirectory(${CLIENT_ROOT_DIR}/3rd/qtkeychain ${CMAKE_BINARY_DIR}/3rd/qtkey
 if(ANDROID)
     # Use qtgamepad from amnezia-vpn/qtgamepad repository
     # Only if Qt6CorePrivate is available (required by qtgamepad)
+    # Qt < 6.9 has no separate Qt6CorePrivate package, the private target comes with Qt6::Core
+    if(Qt6_VERSION VERSION_LESS 6.9 AND TARGET Qt6::CorePrivate)
+        set(Qt6CorePrivate_DIR ${CMAKE_CURRENT_LIST_DIR}/qt66compat/Qt6CorePrivate CACHE PATH "" FORCE)
+    endif()
     find_package(Qt6CorePrivate CONFIG QUIET)
-    if(Qt6CorePrivate_FOUND)
+    if(Qt6CorePrivate_FOUND OR TARGET Qt6::CorePrivate)
         add_subdirectory(${CLIENT_ROOT_DIR}/3rd/qtgamepad ${CMAKE_BINARY_DIR}/3rd/qtgamepad)
         # Link both the C++ module and QML plugin
         if(TARGET ${PROJECT})
