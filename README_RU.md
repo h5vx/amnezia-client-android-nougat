@@ -142,6 +142,18 @@ deploy/build.bat --installer ifw --installer wix
 deploy/build.bat --installer all
 ```
 
+### Сборка под Android 7
+
+Qt 6.7+ не поддерживает Android 7 (API 24/25), поэтому сборка под Android 7 использует Qt 6.6:
+
+* Qt 6.6.3 для хоста (`gcc_64`) и Android ABI, с модулями, перечисленными выше
+* Android NDK 27.0.11718014 и Android SDK platform/build-tools 36
+* Если скрипт нашёл Qt старше 6.7, `minSdk` по умолчанию равен 24
+
+```bash
+QT_ROOT_PATH=~/Qt/6.6.3 deploy/build.sh -t android --abi arm64-v8a --build deploy/build/arm64-v8a
+```
+
 ### Разработка в IDE
 
 * Можно использовать любые IDE которые умеют работать с CMake и находить Qt Kits. Например:

@@ -148,6 +148,18 @@ deploy/build.bat --installer ifw --installer wix
 deploy/build.bat --installer all
 ```
 
+### Building for Android 7
+
+Qt 6.7+ does not support Android 7 (API 24/25), so the Android 7 build uses Qt 6.6:
+
+* Qt 6.6.3 for the host (`gcc_64`) and Android ABIs, with the modules listed above
+* Android NDK 27.0.11718014 and Android SDK platform/build-tools 36
+* When the Qt found by the script is older than 6.7, `minSdk` defaults to 24
+
+```bash
+QT_ROOT_PATH=~/Qt/6.6.3 deploy/build.sh -t android --abi arm64-v8a --build deploy/build/arm64-v8a
+```
+
 ### Developing the project in IDEs
 
 * Basically, you can use any IDE that handles CMake and Qt kits properly to run configure and build steps, and to navigate through the code nicely. For example:
