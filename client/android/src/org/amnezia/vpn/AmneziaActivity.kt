@@ -1063,9 +1063,14 @@ class AmneziaActivity : QtActivity() {
             .setMessage(R.string.notificationSettingsDialogMessage)
             .setNegativeButton(R.string.cancel) { _, _ -> }
             .setPositiveButton(R.string.openNotificationSettings) { _, _ ->
-                startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-                })
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                    })
+                } else {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", packageName, null)))
+                }
             }
             .show()
     }

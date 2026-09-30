@@ -3,7 +3,6 @@ package org.amnezia.vpn
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -88,8 +87,8 @@ class ServiceNotification(private val context: Context) {
     fun isNotificationEnabled(): Boolean {
         if (!context.isNotificationPermissionGranted()) return false
         if (!notificationManager.areNotificationsEnabled()) return false
-        return notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID)?.let {
-            it.importance != NotificationManager.IMPORTANCE_NONE
+        return notificationManager.getNotificationChannelCompat(NOTIFICATION_CHANNEL_ID)?.let {
+            it.importance != NotificationManagerCompat.IMPORTANCE_NONE
         } ?: true
     }
 

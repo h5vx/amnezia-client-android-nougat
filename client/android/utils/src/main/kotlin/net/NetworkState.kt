@@ -10,6 +10,7 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
 import android.net.NetworkRequest
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import androidx.core.content.getSystemService
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlinx.coroutines.delay
@@ -47,7 +48,12 @@ class NetworkState(
 
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 Log.v(TAG, "onCapabilitiesChanged: $network, $networkCapabilities")
-                checkNetworkState(network, networkCapabilities)
+                // before API 26 the callback can't be bound to the handler and is called on a system thread
+                if (Looper.myLooper() == handler.looper) {
+                    checkNetworkState(network, networkCapabilities)
+                } else {
+                    handler.post { checkNetworkState(network, networkCapabilities) }
+                }
             }
 
             private fun checkNetworkState(network: Network, networkCapabilities: NetworkCapabilities) {
@@ -86,7 +92,11 @@ class NetworkState(
             var attemptCount = 0
             while(true) {
                 try {
-                    connectivityManager.requestNetwork(networkRequest, networkCallback, handler)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        connectivityManager.requestNetwork(networkRequest, networkCallback, handler)
+                    } else {
+                        connectivityManager.requestNetwork(networkRequest, networkCallback)
+                    }
                     break
                 } catch (e: SecurityException) {
                     Log.e(TAG, "Failed to bind network listener: $e")

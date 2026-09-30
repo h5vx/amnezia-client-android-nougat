@@ -8,10 +8,10 @@ import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.ZonedDateTime
-import java.time.ZoneOffset
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.locks.ReentrantLock
 import org.amnezia.vpn.util.Log.Priority.D
 import org.amnezia.vpn.util.Log.Priority.E
@@ -39,7 +39,12 @@ private const val LOG_MAX_FILE_SIZE = 1024 * 1024
  * |                   |              | create a report and/or terminate the process |
  */
 object Log {
-    private val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)
+    // java.time is available only since API 26
+    private val dateTimeFormat = object : ThreadLocal<SimpleDateFormat>() {
+        override fun initialValue() = SimpleDateFormat(DATE_TIME_PATTERN, Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+    }
 
     private lateinit var logDir: File
     private val logFile: File by lazy { File(logDir, LOG_FILE_NAME) }
@@ -137,7 +142,7 @@ object Log {
     }
 
     private fun formatLogMsg(tag: String, msg: String, priority: Priority): String {
-        val utcDate = ZonedDateTime.now(ZoneOffset.UTC).format(dateTimeFormat)
+        val utcDate = dateTimeFormat.get()!!.format(Date())
         return "${utcDate}Z ${Process.myPid()} ${Process.myTid()} $priority [${Thread.currentThread().name}] " +
             "$tag: $msg\n"
     }
