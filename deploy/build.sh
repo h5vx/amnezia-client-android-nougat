@@ -127,7 +127,14 @@ case "$TARGET" in
     android)
         no_installers=1
         : ${CMAKE_GENERATOR:="Ninja"}
-        : ${ANDROID_PLATFORM:="android-${APP_ANDROID_MIN_SDK:-24}"}
+        # Android 7 (API 24) is supported only with Qt 6.6, newer Qt requires Android 9 (API 28)
+        qt_version=$(basename "$QT_ROOT_PATH")
+        if [[ "$(printf '%s\n' "$qt_version" 6.7 | sort -V | head -1)" != 6.7 ]]; then
+            : ${APP_ANDROID_MIN_SDK:=24}
+        else
+            : ${APP_ANDROID_MIN_SDK:=28}
+        fi
+        : ${ANDROID_PLATFORM:="android-${APP_ANDROID_MIN_SDK}"}
 
         if [[ -n "$SIGN" ]]; then
             QT_ANDROID_SIGN_APK=TRUE

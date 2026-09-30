@@ -1,7 +1,13 @@
 message("Client android ${CMAKE_ANDROID_ARCH_ABI} build")
 
 if(NOT DEFINED APP_ANDROID_MIN_SDK)
-    set(APP_ANDROID_MIN_SDK 24)
+    # Qt >= 6.7 requires Android 8+ (Qt 6.8+ requires Android 9+),
+    # Android 7 (API 24) is supported only with Qt 6.6
+    if(Qt6_VERSION VERSION_LESS 6.7)
+        set(APP_ANDROID_MIN_SDK 24)
+    else()
+        set(APP_ANDROID_MIN_SDK 28)
+    endif()
 endif()
 
 # Option to build Play variant (with Google Play Billing) instead of OSS
