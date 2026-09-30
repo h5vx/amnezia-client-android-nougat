@@ -1,7 +1,7 @@
 message("Client android ${CMAKE_ANDROID_ARCH_ABI} build")
 
 if(NOT DEFINED APP_ANDROID_MIN_SDK)
-    set(APP_ANDROID_MIN_SDK 28)
+    set(APP_ANDROID_MIN_SDK 24)
 endif()
 
 # Option to build Play variant (with Google Play Billing) instead of OSS
