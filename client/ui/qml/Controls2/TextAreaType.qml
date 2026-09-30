@@ -93,9 +93,11 @@ Rectangle {
 
                 wrapMode: Text.Wrap
 
-                ContextMenu.menu: contextMenu.useNativeEditMenu ? null : contextMenu
-                ContextMenu.onRequested: function(position) {
-                    contextMenu.requestNative(position)
+                TapHandler {
+                    acceptedButtons: Qt.RightButton
+                    onTapped: function(eventPoint) {
+                        contextMenu.show(eventPoint.position)
+                    }
                 }
 
                 // Native iOS text fields select the word and show the edit

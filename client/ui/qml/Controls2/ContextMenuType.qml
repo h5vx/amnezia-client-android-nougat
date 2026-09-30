@@ -4,8 +4,6 @@ import QtQuick.Controls
 Menu {
     property var textObj
 
-    popupType: Popup.Native
-
     // On Qt < 6.10 the ContextMenu attached type has no native backing on iOS
     // and opens this Qt-drawn menu instead. In that case the native edit menu
     // is presented through UIEditMenuInteraction (IosContextMenu is registered
@@ -17,6 +15,15 @@ Menu {
         if (useNativeEditMenu && textObj) {
             textObj.forceActiveFocus()
             IosContextMenu.present(textObj, position.x, position.y)
+        }
+    }
+
+    // The ContextMenu attached type requires Qt 6.9, Android 7 builds use Qt 6.6
+    function show(position) {
+        if (useNativeEditMenu) {
+            requestNative(position)
+        } else if (textObj) {
+            popup(textObj, position.x, position.y)
         }
     }
 
