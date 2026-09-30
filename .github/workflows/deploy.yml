@@ -1,9 +1,9 @@
 name: 'Deploy workflow'
 
+# Upstream CI depends on Amnezia's self-hosted runners and secrets, so it runs only on demand
+# in the Android 7 fork; releases are built by nougat-release.yml
 on:
-  push:
-    branches:
-      - '**'
+  workflow_dispatch:
 
 env:
   QT_MIRROR: https://mirrors.ocf.berkeley.edu/qt/ # https://download.qt.io/static/mirrorlist/
